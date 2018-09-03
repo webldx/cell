@@ -10,7 +10,7 @@
         <el-input v-model="formData.username"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="formData.password" type="password" ></el-input>
+        <el-input @keyup.enter.native="handleLogin" v-model="formData.password" type="password" ></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="handleLogin" class="login-btn" type="primary">登陆</el-button>
@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     handleLogin() {
-      console.log(this.formData)
+      console.log(this.formData);
       this.$Http.post('login', this.formData)
         .then((response) => {
           // 将对象结构赋值
@@ -42,6 +42,7 @@ export default {
             this.$message.success(msg);
             // 将用户token 记录到sessionStorage
             sessionStorage.setItem('token', response.data.data.token);
+            this.$router.push('/');
           } else {
             this.$message.error(msg);
           }
