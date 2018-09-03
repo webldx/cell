@@ -1,4 +1,5 @@
 <template>
+  <!-- 头部 -->
   <el-container>
     <el-header>
       <el-row>
@@ -13,6 +14,58 @@
         </el-col>
       </el-row>
     </el-header>
+    <el-container>
+      <el-aside width="200px">
+          <!-- 侧边栏 -->
+        <el-menu default-active="1-1">
+          <el-submenu index="1">
+              <!-- 显示的是父菜单的内容 -->
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>导航一</span>
+              </template>
+              <!-- 菜单项 el-menu-item -->
+              <el-menu-item index="1-1">
+                <i class="el-icon-loading"></i>
+                选项1</el-menu-item>
+              <el-menu-item index="1-2">
+                <i class="el-icon-loading"></i>
+                选项2</el-menu-item>
+          </el-submenu>
+          <el-submenu index="2">
+              <!-- 显示的是父菜单的内容 -->
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>导航一</span>
+              </template>
+              <!-- 菜单项 el-menu-item -->
+              <el-menu-item index="2-1"><i class="el-icon-loading"></i>选项1</el-menu-item>
+              <el-menu-item index="2-2"><i class="el-icon-loading"></i>选项2</el-menu-item>
+          </el-submenu>
+          <el-submenu index="3">
+              <!-- 显示的是父菜单的内容 -->
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>导航一</span>
+              </template>
+              <!-- 菜单项 el-menu-item -->
+              <el-menu-item index="3-1"><i class="el-icon-loading"></i>选项1</el-menu-item>
+              <el-menu-item index="3-2"><i class="el-icon-loading"></i>选项2</el-menu-item>
+          </el-submenu>
+          <el-submenu index="4">
+              <!-- 显示的是父菜单的内容 -->
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>导航一</span>
+              </template>
+              <!-- 菜单项 el-menu-item -->
+              <el-menu-item index="4-1"><i class="el-icon-loading"></i>选项1</el-menu-item>
+              <el-menu-item index="4-2"><i class="el-icon-loading"></i>选项2</el-menu-item>
+          </el-submenu>
+        </el-menu>
+      </el-aside>
+      <el-main>Main</el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -50,6 +103,7 @@ export default {
   background-color: #D3DCE6;
   color: #333;
   line-height: 200px;
+  height: 100%;
 }
 
 .el-main {
