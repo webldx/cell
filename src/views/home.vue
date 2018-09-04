@@ -10,7 +10,8 @@
           <span>电商后台管理项目</span>
         </el-col>
         <el-col :span="1">
-          <a class="logout" href="#">退出</a>
+          <!-- 设置退出按钮的点击事件 -->
+          <a class="logout" href="#" @click.prevent="handleLogout">退出</a>
         </el-col>
       </el-row>
     </el-header>
@@ -87,7 +88,17 @@ export default {
       // 并进行页面跳转
       this.$router.push('/login');
     }
-
+  },
+  // 设置方法
+  methods: {
+    handleLogout() {
+      // 当点击的时候将本地session清除
+      sessionStorage.removeItem('token');
+      // 并作出提示
+      this.$message.success('退出成功');
+      // 清除之后进行页面跳转
+      this.$router.push('/login');
+    }
   }
 
 };
