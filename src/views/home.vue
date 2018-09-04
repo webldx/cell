@@ -17,7 +17,7 @@
     <el-container>
       <el-aside width="200px">
           <!-- 侧边栏 -->
-        <el-menu default-active="1-1">
+        <el-menu :unique-opened="true" :router="true" style="height: 100%" default-active="0">
           <el-submenu index="1">
               <!-- 显示的是父菜单的内容 -->
               <template slot="title">
@@ -25,7 +25,7 @@
                 <span>用户管理</span>
               </template>
               <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="1-1"><i class="el-icon-menu"></i>用户列表</el-menu-item>
+              <el-menu-item index="/users"><i class="el-icon-menu"></i>用户列表</el-menu-item>
           </el-submenu>
           <el-submenu index="2">
               <!-- 显示的是父菜单的内容 -->
@@ -34,8 +34,8 @@
                 <span>权限管理</span>
               </template>
               <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="2-1"><i class="el-icon-menu"></i>角色列表</el-menu-item>
-              <el-menu-item index="2-2"><i class="el-icon-menu"></i>权限列表</el-menu-item>
+              <el-menu-item index="/roles"><i class="el-icon-menu"></i>角色列表</el-menu-item>
+              <el-menu-item index="/rights"><i class="el-icon-menu"></i>权限列表</el-menu-item>
           </el-submenu>
           <el-submenu index="3">
               <!-- 显示的是父菜单的内容 -->
@@ -46,7 +46,7 @@
               <!-- 菜单项 el-menu-item -->
               <el-menu-item index="3-1"><i class="el-icon-menu"></i>商品列表</el-menu-item>
               <el-menu-item index="3-2"><i class="el-icon-menu"></i>分类参数</el-menu-item>
-              <el-menu-item index="3-2"><i class="el-icon-menu"></i>商品分类</el-menu-item>
+              <el-menu-item index="3-3"><i class="el-icon-menu"></i>商品分类</el-menu-item>
           </el-submenu>
           <el-submenu index="4">
               <!-- 显示的是父菜单的内容 -->
