@@ -40,6 +40,8 @@ export default {
           if (status === 200) {
             // 使用组件中的弹框进行提醒
             this.$message.success(msg);
+
+            // (重要) 在登录成功的时候将token记录一下
             // 将用户token 记录到sessionStorage
             sessionStorage.setItem('token', response.data.data.token);
             this.$router.push('/');
