@@ -5,6 +5,8 @@ import Router from 'vue-router';
 import Login from '@/views/Login';
 // 导入首页模块
 import Home from '@/views/home';
+// 导入用户模块
+import UsersList from '@/views/users/List';
 Vue.use(Router);
 
 export default new Router({
@@ -16,7 +18,14 @@ export default new Router({
     }, {
       name: 'home',
       path: '/',
-      component: Home
+      component: Home,
+      children: [
+        {
+          name: 'users',
+          path: '/users',
+          component: UsersList
+        }
+      ]
     }
   ]
 });
