@@ -22,45 +22,49 @@
               <!-- 显示的是父菜单的内容 -->
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <span>用户管理</span>
               </template>
               <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="1-1">
-                <i class="el-icon-loading"></i>
-                选项1</el-menu-item>
-              <el-menu-item index="1-2">
-                <i class="el-icon-loading"></i>
-                选项2</el-menu-item>
+              <el-menu-item index="1-1"><i class="el-icon-menu"></i>用户列表</el-menu-item>
           </el-submenu>
           <el-submenu index="2">
               <!-- 显示的是父菜单的内容 -->
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <span>权限管理</span>
               </template>
               <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="2-1"><i class="el-icon-loading"></i>选项1</el-menu-item>
-              <el-menu-item index="2-2"><i class="el-icon-loading"></i>选项2</el-menu-item>
+              <el-menu-item index="2-1"><i class="el-icon-menu"></i>角色列表</el-menu-item>
+              <el-menu-item index="2-2"><i class="el-icon-menu"></i>权限列表</el-menu-item>
           </el-submenu>
           <el-submenu index="3">
               <!-- 显示的是父菜单的内容 -->
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <span>商品管理</span>
               </template>
               <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="3-1"><i class="el-icon-loading"></i>选项1</el-menu-item>
-              <el-menu-item index="3-2"><i class="el-icon-loading"></i>选项2</el-menu-item>
+              <el-menu-item index="3-1"><i class="el-icon-menu"></i>商品列表</el-menu-item>
+              <el-menu-item index="3-2"><i class="el-icon-menu"></i>分类参数</el-menu-item>
+              <el-menu-item index="3-2"><i class="el-icon-menu"></i>商品分类</el-menu-item>
           </el-submenu>
           <el-submenu index="4">
               <!-- 显示的是父菜单的内容 -->
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <span>订单管理</span>
               </template>
               <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="4-1"><i class="el-icon-loading"></i>选项1</el-menu-item>
-              <el-menu-item index="4-2"><i class="el-icon-loading"></i>选项2</el-menu-item>
+              <el-menu-item index="4-1"><i class="el-icon-menu"></i>订单列表</el-menu-item>
+          </el-submenu>
+          <el-submenu index="5">
+              <!-- 显示的是父菜单的内容 -->
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>数据统计</span>
+              </template>
+              <!-- 菜单项 el-menu-item -->
+              <el-menu-item index="5-1"><i class="el-icon-menu"></i>数据列表</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
