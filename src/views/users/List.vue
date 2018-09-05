@@ -18,10 +18,12 @@
     </el-row>
     <el-table :data="tableData" border stripe style="width: 100%">
       <el-table-column type="index" width="50"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
+      <el-table-column prop="username" label="姓名" width="180"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
-      <el-table-column prop="name" label="电话" width="180"></el-table-column>
-      <el-table-column prop="address" label="用户状态"></el-table-column>
+      <el-table-column prop="mobile" label="电话" width="180"></el-table-column>
+      <el-table-column prop="create_time" label="时间"></el-table-column>
+      <el-table-column prop="mg_state" label="用户状态"></el-table-column>
+      <el-table-column label="操作"></el-table-column>
     </el-table>
   </el-card>
 </template>
@@ -30,25 +32,39 @@
 export default {
   data() {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      // 将原来死数据删掉,将表单绑定的属性留下
+      tableData: []
     };
+  },
+  created() {
+    this.loadData();
+  },
+  // 创建一个方法,发送请求,获取数据
+  methods: {
+    loadData() {
+      // 设置token,首先从本地中获取token
+      // const token = sessionStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
+      // 设置请求头
+      this.$Http.defaults.headers.common['Authorization'] = token;
+      // 发送请求     路径  传入参数
+      this.$Http.get('users?pagenum=1&pagesize=10')
+        .then((response) => {
+          console.log(response);
+          // 将获取的数据进行结构并进行判断
+          const { meta: { msg, status } } = response.data;
+          if (status === 200) {
+            this.tableData = response.data.data.users;
+          } else {
+            console.log(msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }
+
 };
 </script>
 
