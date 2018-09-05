@@ -42,6 +42,16 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页样式 -->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
   </el-card>
 </template>
 
@@ -50,7 +60,11 @@ export default {
   data() {
     return {
       // 将原来死数据删掉,将表单绑定的属性留下
-      tableData: []
+      tableData: [],
+      loading: true,
+      pagenum: 1,
+      pagesize: 5,
+      total: 100
     };
   },
   created() {
@@ -73,6 +87,12 @@ export default {
       } else {
         console.log(msg);
       }
+    },
+    handleSizeChange() {
+
+    },
+    handleCurrentChange() {
+
     }
 
     /* loadData() {
