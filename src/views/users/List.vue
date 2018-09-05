@@ -27,7 +27,7 @@
       <el-table-column prop="mg_state" label="用户状态">
         <template slot-scope="scope">
           <!-- 渲染用户状态按钮 -->
-          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949">
+          <el-switch @change="hanleChange(scope.row)" v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949">
           </el-switch>
         </template>
       </el-table-column>
@@ -135,6 +135,20 @@ export default {
           message: '已取消删除'
         });
       });
+    },
+    // 改变用户状态
+    async hanleChange(user) {
+      console.log(user);
+      // 发送异步请求
+      const response = await this.$Http.put(`users/${user.id}/state/${user.mg_state}`);
+      // 将获取的用户信息进行结构
+      const { meta: { msg, status } } = response.data;
+      // 进行判断
+      if (status === 200) {
+        this.$message.success(msg);
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 
