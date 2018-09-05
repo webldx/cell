@@ -11,7 +11,7 @@
         <el-input v-model="searchValue" clearable style="width: 300px" placeholder="请输入内容">
           <el-button @click="handleSeach" slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="success" plain>添加用户</el-button>
+        <el-button @click="addUserDialogFormVisible=true" type="success" plain>添加用户</el-button>
       </el-col>
     </el-row>
     <el-table :data="tableData" border stripe style="width: 100%">
@@ -51,6 +51,27 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <!-- 添加用户的对话框 -->
+    <el-dialog title="收货用户" :visible.sync="addUserDialogFormVisible">
+      <el-form label-width="80px" :model="formData">
+        <el-form-item label="用户名">
+          <el-input v-model="formData.username" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="formData.password" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="formData.email" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="formData.mobile" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addUserDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleAdd">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -64,7 +85,16 @@ export default {
       pagenum: 1,
       pagesize: 2,
       total: 0,
-      searchValue: ''
+      searchValue: '',
+      // 控制添加用户页面的显示与影藏
+      addUserDialogFormVisible: false,
+      // 绑定添加用户页面的表单对象
+      formData: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      }
     };
   },
   created() {
@@ -146,6 +176,24 @@ export default {
       // 进行判断
       if (status === 200) {
         this.$message.success(msg);
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    // 添加用户点击确定时
+    async handleAdd() {
+      // 发送请求
+      const response = await this.$Http.post(`users`, this.formData);
+      // console.log(response);
+      // 将返回值进行解构
+      const { meta: { msg, status } } = response.data;
+      if (status === 201) {
+        // 弹框进行提示
+        this.$message.success(msg);
+        // 刷新表格
+        this.loadData();
+        // 关闭当前对话框
+        this.addUserDialogFormVisible = false;
       } else {
         this.$message.error(msg);
       }
