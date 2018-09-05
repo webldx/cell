@@ -30,31 +30,48 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
-      console.log(this.formData);
-      this.$Http.post('login', this.formData)
-        .then((response) => {
-          // 将对象结构赋值
-          const {meta: { msg, status }} = response.data;
-          console.log(response);
-          if (status === 200) {
-            // 使用组件中的弹框进行提醒
-            this.$message.success(msg);
+    async handleLogin() {
+      const response = await this.$Http.post('logiin', this.formData);
+      const {meta: { msg, status }} = response.data;
+      // console.log(response);
+      if (status === 200) {
+        // 使用组件中的弹框进行提醒
+        this.$message.success(msg);
 
-            // (重要) 在登录成功的时候将token记录一下
-            // 将用户token 记录到sessionStorage
-            sessionStorage.setItem('token', response.data.data.token);
-            this.$router.push('/');
-          } else {
-            this.$message.error(msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        // (重要) 在登录成功的时候将token记录一下
+        // 将用户token 记录到sessionStorage
+        sessionStorage.setItem('token', response.data.data.token);
+        this.$router.push('/');
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
+  /* handleLogin() {
+    // console.log(this.formData);
+    this.$Http.post('login', this.formData)
+      .then((response) => {
+        // 将对象结构赋值
+        const {meta: { msg, status }} = response.data;
+        console.log(response);
+        if (status === 200) {
+          // 使用组件中的弹框进行提醒
+          this.$message.success(msg);
+
+          // (重要) 在登录成功的时候将token记录一下
+          // 将用户token 记录到sessionStorage
+          sessionStorage.setItem('token', response.data.data.token);
+          this.$router.push('/');
+        } else {
+          this.$message.error(msg);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } */
 };
+
 </script>
 
 <style>
