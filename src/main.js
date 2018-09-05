@@ -9,9 +9,12 @@ import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/css/index.css';
 // 引入插件模块
 import MyHttp from '@/plugins/MyHttp';
+import moment from 'moment';
 // 注册element插件
 Vue.use(Element);
-
+Vue.filter('fmtDate', (value, fmtStr) => {
+  return moment(value).format(fmtStr);
+});
 // 注册 MyHttp 插件
 Vue.use(MyHttp);
 
