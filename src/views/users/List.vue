@@ -113,11 +113,22 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+      }).then(async () => {
+        // 当点击确定按钮的时候执行
+        const response = await this.$Http.delete(`users/${id}`);
+        // console.log(response);
+        // 将返回值进行结构
+        const { meta: { msg, status } } = response.data;
+        if (status === 200) {
+          this.$message.success(msg);
+          // 处理问题
+          if (this.pagenum > 1 && this.tableData.length === 1) {
+            this.pagenum--;
+          }
+          this.loadData();
+        } else {
+          this.$message.error(msg);
+        }
       }).catch(() => {
         this.$message({
           type: 'info',
