@@ -41,7 +41,23 @@ export default {
   },
   // 创建一个方法,发送请求,获取数据
   methods: {
-    loadData() {
+    async loadData() {
+      // 获取token
+      const token = sessionStorage.getItem('token');
+      // 设置请求头
+      this.$Http.defaults.headers.common['Authorization'] = token;
+      // 发送请求
+      const response = await this.$Http.get('users?pagenum=1&pagesize=10');
+      // 将数据进行结构
+      const { meta: { msg, status } } = response.data;
+      if (status === 200) {
+        this.tableData = response.data.data.users;
+      } else {
+        console.log(msg);
+      }
+    }
+
+    /* loadData() {
       // 设置token,首先从本地中获取token
       // const token = sessionStorage.getItem('token');
       const token = sessionStorage.getItem('token');
@@ -62,7 +78,7 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-    }
+    } */
   }
 
 };
