@@ -8,10 +8,8 @@
     <!-- 设置搜索框 -->
     <el-row class="row">
       <el-col :span="24">
-        <el-input
-          style="width: 300px"
-          placeholder="请输入内容">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input v-model="searchValue" clearable style="width: 300px" placeholder="请输入内容">
+          <el-button @click="handleSeach" slot="append" icon="el-icon-search"></el-button>
         </el-input>
         <el-button type="success" plain>添加用户</el-button>
       </el-col>
@@ -42,12 +40,12 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页样式 -->
+    <!-- 分页样式  后来改变数据 -->
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="pagenum"
-      :page-sizes="[10, 20, 30, 40]"
+      :page-sizes="[2, 3, 4, 5]"
       :page-size="pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
@@ -63,8 +61,9 @@ export default {
       tableData: [],
       loading: true,
       pagenum: 1,
-      pagesize: 5,
-      total: 100
+      pagesize: 2,
+      total: 0,
+      searchValue: ''
     };
   },
   created() {
@@ -77,22 +76,33 @@ export default {
       const token = sessionStorage.getItem('token');
       // 设置请求头
       this.$Http.defaults.headers.common['Authorization'] = token;
-      // 发送请求
-      const response = await this.$Http.get('users?pagenum=1&pagesize=10');
-      console.log(response);
+      // 发送请求       将后来添加的数据也进行传参进行发送数据
+      const response = await this.$Http.get(`users?pagenum=${this.pagenum}&pagesize=${this.pagesize}&query=${this.searchValue}`);
+      // console.log(response);
+      this.loading = false;
       // 将数据进行结构
       const { meta: { msg, status } } = response.data;
       if (status === 200) {
+        // 当获取到数据的时候设置总条数
+        this.total = response.data.data.total;
         this.tableData = response.data.data.users;
       } else {
         console.log(msg);
       }
     },
-    handleSizeChange() {
-
+    // 当数量发生变化时触发的事件
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.loadData();
     },
-    handleCurrentChange() {
-
+    // 页码发生改变的时候
+    handleCurrentChange(val) {
+      this.pagenum = val;
+      this.loadData();
+    },
+    // 点击手速按钮的时候发送请求
+    handleSeach() {
+      this.loadData();
     }
 
     /* loadData() {
@@ -133,5 +143,9 @@ export default {
 
 .el-main {
   line-height: 30px;
+}
+
+.el-pagination {
+  margin: 15px 0;
 }
 </style>
