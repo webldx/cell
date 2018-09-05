@@ -35,7 +35,8 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
-          <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
+          <!-- 给删除按钮添加点击事件并且将当前行的id传过去 -->
+          <el-button @click="handleDelete(scope.row.id)" type="danger" icon="el-icon-delete" plain size="mini"></el-button>
           <el-button type="success" icon="el-icon-check" plain size="mini"></el-button>
         </template>
       </el-table-column>
@@ -72,13 +73,15 @@ export default {
   // 创建一个方法,发送请求,获取数据
   methods: {
     async loadData() {
+      // 在一开始请求的时候就得将变量重新赋值
+      this.loading = true;
       // 获取token
       const token = sessionStorage.getItem('token');
       // 设置请求头
       this.$Http.defaults.headers.common['Authorization'] = token;
       // 发送请求       将后来添加的数据也进行传参进行发送数据
       const response = await this.$Http.get(`users?pagenum=${this.pagenum}&pagesize=${this.pagesize}&query=${this.searchValue}`);
-      // console.log(response);
+      console.log(response);
       this.loading = false;
       // 将数据进行结构
       const { meta: { msg, status } } = response.data;
@@ -103,33 +106,51 @@ export default {
     // 点击手速按钮的时候发送请求
     handleSeach() {
       this.loadData();
-    }
-
-    /* loadData() {
-      // 设置token,首先从本地中获取token
-      // const token = sessionStorage.getItem('token');
-      const token = sessionStorage.getItem('token');
-      // 设置请求头
-      this.$Http.defaults.headers.common['Authorization'] = token;
-      // 发送请求     路径  传入参数
-      this.$Http.get('users?pagenum=1&pagesize=10')
-        .then((response) => {
-          console.log(response);
-          // 将获取的数据进行结构并进行判断
-          const { meta: { msg, status } } = response.data;
-          if (status === 200) {
-            this.tableData = response.data.data.users;
-          } else {
-            console.log(msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
+    },
+    // 删除按钮的点击事件,并且将id进行接收
+    handleDelete(id) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
         });
-    } */
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    }
   }
 
+  /* loadData() {
+    // 设置token,首先从本地中获取token
+    // const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
+    // 设置请求头
+    this.$Http.defaults.headers.common['Authorization'] = token;
+    // 发送请求     路径  传入参数
+    this.$Http.get('users?pagenum=1&pagesize=10')
+      .then((response) => {
+        console.log(response);
+        // 将获取的数据进行结构并进行判断
+        const { meta: { msg, status } } = response.data;
+        if (status === 200) {
+          this.tableData = response.data.data.users;
+        } else {
+          console.log(msg);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } */
 };
+
 </script>
 
 <style>
