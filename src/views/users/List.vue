@@ -22,7 +22,14 @@
       <el-table-column prop="email" label="邮箱" width="150"></el-table-column>
       <el-table-column prop="mobile" label="电话" width="150"></el-table-column>
       <el-table-column prop="create_time" label="时间"></el-table-column>
-      <el-table-column prop="mg_state" label="用户状态"></el-table-column>
+      <el-table-column prop="mg_state" label="用户状态">
+        <template slot-scope="scope">
+          <!-- 渲染用户状态按钮 -->
+          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949">
+          </el-switch>
+        </template>
+      </el-table-column>
+      <!-- 渲染用户操作按钮 -->
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
@@ -54,6 +61,7 @@ export default {
       this.$Http.defaults.headers.common['Authorization'] = token;
       // 发送请求
       const response = await this.$Http.get('users?pagenum=1&pagesize=10');
+      console.log(response);
       // 将数据进行结构
       const { meta: { msg, status } } = response.data;
       if (status === 200) {
