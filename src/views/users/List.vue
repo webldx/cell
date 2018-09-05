@@ -34,7 +34,7 @@
       <!-- 渲染用户操作按钮 -->
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
+          <el-button @click="editUserDialogFormVisible" type="primary" icon="el-icon-edit" plain size="mini"></el-button>
           <!-- 给删除按钮添加点击事件并且将当前行的id传过去 -->
           <el-button @click="handleDelete(scope.row.id)" type="danger" icon="el-icon-delete" plain size="mini"></el-button>
           <el-button type="success" icon="el-icon-check" plain size="mini"></el-button>
@@ -52,12 +52,13 @@
       :total="total">
     </el-pagination>
     <!-- 添加用户的对话框 -->
-    <el-dialog title="收货用户" :visible.sync="addUserDialogFormVisible">
-      <el-form label-width="80px" :model="formData">
-        <el-form-item label="用户名">
+    <el-dialog @close="handleClose" title="修改用户" :visible.sync="addUserDialogFormVisible">
+      <el-form ref="from" :rules="rules" label-width="80px" :model="formData">
+        <el-form-item prop="username" label="用户名">
+          <!-- prop 用来匹配下面数据定义的验证方式 直接传入参数就可以 -->
           <el-input v-model="formData.username" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
+        <el-form-item prop="password" label="密码">
           <el-input v-model="formData.password" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
@@ -72,6 +73,7 @@
         <el-button type="primary" @click="handleAdd">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 修改用户的对话框 -->
   </el-card>
 </template>
 
@@ -94,6 +96,16 @@ export default {
         password: '',
         email: '',
         mobile: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 6, message: '长度在 3 到 6 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
+        ]
       }
     };
   },
@@ -111,7 +123,7 @@ export default {
       this.$Http.defaults.headers.common['Authorization'] = token;
       // 发送请求       将后来添加的数据也进行传参进行发送数据
       const response = await this.$Http.get(`users?pagenum=${this.pagenum}&pagesize=${this.pagesize}&query=${this.searchValue}`);
-      console.log(response);
+      // console.log(response);
       this.loading = false;
       // 将数据进行结构
       const { meta: { msg, status } } = response.data;
@@ -181,21 +193,36 @@ export default {
       }
     },
     // 添加用户点击确定时
-    async handleAdd() {
-      // 发送请求
-      const response = await this.$Http.post(`users`, this.formData);
-      // console.log(response);
-      // 将返回值进行解构
-      const { meta: { msg, status } } = response.data;
-      if (status === 201) {
-        // 弹框进行提示
-        this.$message.success(msg);
-        // 刷新表格
-        this.loadData();
-        // 关闭当前对话框
-        this.addUserDialogFormVisible = false;
-      } else {
-        this.$message.error(msg);
+    handleAdd() {
+      // 表单验证
+      this.$refs.from.validate(async (valid) => {
+        if (!valid) {
+          this.$message.warning('验证失败');
+          return;
+        }
+        // 验证成功，发送异步请求
+        const response = await this.$http.post('users', this.formData);
+        // 获取数据，判断添加是否成功
+        const { meta: { status, msg } } = response.data;
+        if (status === 201) {
+          // 成功
+          // 提示
+          this.$message.success(msg);
+          // 刷新表格
+          this.loadData();
+          // 关闭对话框
+          this.addUserDialogFormVisible = false;
+        } else {
+          // 失败
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 关闭对话框时清空文本框
+    handleClose() {
+      // 清空文本框
+      for (let key in this.formData) {
+        this.formData[key] = '';
       }
     }
   }
