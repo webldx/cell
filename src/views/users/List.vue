@@ -14,7 +14,8 @@
         <el-button @click="addUserDialogFormVisible=true" type="success" plain>添加用户</el-button>
       </el-col>
     </el-row>
-    <el-table :data="tableData" border stripe style="width: 100%">
+    <!-- 数据表格展示 -->
+    <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column prop="username" label="姓名" width="100"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="150"></el-table-column>
@@ -34,13 +35,14 @@
       <!-- 渲染用户操作按钮 -->
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button @click="editUserDialogFormVisible" type="primary" icon="el-icon-edit" plain size="mini"></el-button>
+          <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
           <!-- 给删除按钮添加点击事件并且将当前行的id传过去 -->
           <el-button @click="handleDelete(scope.row.id)" type="danger" icon="el-icon-delete" plain size="mini"></el-button>
           <el-button type="success" icon="el-icon-check" plain size="mini"></el-button>
         </template>
       </el-table-column>
     </el-table>
+
     <!-- 分页样式  后来改变数据 -->
     <el-pagination
       @size-change="handleSizeChange"
@@ -51,9 +53,10 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+
     <!-- 添加用户的对话框 -->
     <el-dialog @close="handleClose" title="修改用户" :visible.sync="addUserDialogFormVisible">
-      <el-form ref="from" :rules="rules" label-width="80px" :model="formData">
+      <el-form ref="form" :rules="rules" label-width="80px" :model="formData">
         <el-form-item prop="username" label="用户名">
           <!-- prop 用来匹配下面数据定义的验证方式 直接传入参数就可以 -->
           <el-input v-model="formData.username" auto-complete="off"></el-input>
@@ -74,6 +77,7 @@
       </div>
     </el-dialog>
     <!-- 修改用户的对话框 -->
+
   </el-card>
 </template>
 
@@ -195,13 +199,13 @@ export default {
     // 添加用户点击确定时
     handleAdd() {
       // 表单验证
-      this.$refs.from.validate(async (valid) => {
+      this.$refs.form.validate(async (valid) => {
         if (!valid) {
           this.$message.warning('验证失败');
           return;
         }
         // 验证成功，发送异步请求
-        const response = await this.$http.post('users', this.formData);
+        const response = await this.$Http.post('users', this.formData);
         // 获取数据，判断添加是否成功
         const { meta: { status, msg } } = response.data;
         if (status === 201) {
@@ -226,29 +230,6 @@ export default {
       }
     }
   }
-
-  /* loadData() {
-    // 设置token,首先从本地中获取token
-    // const token = sessionStorage.getItem('token');
-    const token = sessionStorage.getItem('token');
-    // 设置请求头
-    this.$Http.defaults.headers.common['Authorization'] = token;
-    // 发送请求     路径  传入参数
-    this.$Http.get('users?pagenum=1&pagesize=10')
-      .then((response) => {
-        console.log(response);
-        // 将获取的数据进行结构并进行判断
-        const { meta: { msg, status } } = response.data;
-        if (status === 200) {
-          this.tableData = response.data.data.users;
-        } else {
-          console.log(msg);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  } */
 };
 
 </script>
