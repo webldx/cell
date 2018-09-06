@@ -35,7 +35,8 @@
       <!-- 渲染用户操作按钮 -->
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
+          <!-- 编辑按钮点击事件 将弹框显示 -->
+          <el-button @click="handleOpenEditDialog(scope.row)" type="primary" icon="el-icon-edit" plain size="mini"></el-button>
           <!-- 给删除按钮添加点击事件并且将当前行的id传过去 -->
           <el-button @click="handleDelete(scope.row.id)" type="danger" icon="el-icon-delete" plain size="mini"></el-button>
           <el-button type="success" icon="el-icon-check" plain size="mini"></el-button>
@@ -55,7 +56,7 @@
     </el-pagination>
 
     <!-- 添加用户的对话框 -->
-    <el-dialog @close="handleClose" title="修改用户" :visible.sync="addUserDialogFormVisible">
+    <el-dialog @close="handleClose" title="添加用户" :visible.sync="addUserDialogFormVisible">
       <el-form ref="form" :rules="rules" label-width="80px" :model="formData">
         <el-form-item prop="username" label="用户名">
           <!-- prop 用来匹配下面数据定义的验证方式 直接传入参数就可以 -->
@@ -77,7 +78,24 @@
       </div>
     </el-dialog>
     <!-- 修改用户的对话框 -->
-
+    <el-dialog title="修改用户" :visible.sync="editUserDialogFormVisible">
+      <el-form ref="form" :rules="rules" label-width="80px" :model="formData">
+        <el-form-item prop="username" label="用户名">
+          <!-- prop 用来匹配下面数据定义的验证方式 直接传入参数就可以 -->
+          <el-input v-model="formData.username" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="formData.email" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="formData.mobile" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addUserDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleAdd">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -110,7 +128,9 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
         ]
-      }
+      },
+      // 控制修改用户对话框的显示或隐藏
+      editUserDialogFormVisible: false
     };
   },
   created() {
@@ -228,6 +248,15 @@ export default {
       for (let key in this.formData) {
         this.formData[key] = '';
       }
+    },
+    // 点击编辑按钮 将当前用户的对象数据传过来
+    handleOpenEditDialog(user) {
+      // 控制修改用户对话框的显示或隐藏
+      this.editUserDialogFormVisible = true;
+      // console.log(user);
+      this.formData.username = user.username;
+      this.formData.email = user.email;
+      this.formData.mobile = user.mobile;
     }
   }
 };
