@@ -2,18 +2,14 @@
   <!-- 卡片 -->
   <el-card class="card">
     <!-- 面包屑 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>权限管理</el-breadcrumb-item>
-      <el-breadcrumb-item>权限列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <my-breadcrumb level1="权限管理" level2="权限列表"></my-breadcrumb>
     <!-- 表格 -->
     <template>
       <el-table
         stripe
         :data="tableData"
         border
-        style="width: 100%, margin-top: 10px">
+        style="width: 100%; margin-top: 10px">
         <el-table-column type="index" width="60"></el-table-column>
         <el-table-column prop="authName" label="权限名称" width="180"></el-table-column>
         <el-table-column prop="path" label="路径" width="180"></el-table-column>
@@ -33,6 +29,7 @@
 export default {
   data() {
     return {
+      // 表格中绑定的数据是一个数组
       tableData: []
     };
   },
@@ -58,5 +55,9 @@ export default {
 .card {
   height: 100%;
   overflow: auto;
+}
+
+.el-main {
+  line-height: 20px;
 }
 </style>

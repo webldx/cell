@@ -9,6 +9,8 @@ import Home from '@/views/home';
 import UsersList from '@/views/users/List';
 // 导入组件用户角色
 import Rights from '@/views/rights/Rights';
+// 导入角色列表组件
+import Roles from '@/views/rights/Roles';
 Vue.use(Router);
 
 export default new Router({
@@ -30,6 +32,10 @@ export default new Router({
           name: 'rights',
           path: '/rights',
           component: Rights
+        }, {
+          name: 'roles',
+          path: 'roles',
+          component: Roles
         }
       ]
     }

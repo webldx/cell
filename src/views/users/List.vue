@@ -39,7 +39,8 @@
           <el-button @click="handleOpenEditDialog(scope.row)" type="primary" icon="el-icon-edit" plain size="mini"></el-button>
           <!-- 给删除按钮添加点击事件并且将当前行的id传过去 -->
           <el-button @click="handleDelete(scope.row.id)" type="danger" icon="el-icon-delete" plain size="mini"></el-button>
-          <el-button type="success" icon="el-icon-check" plain size="mini"></el-button>
+          <!-- 角色分配按钮点击事件将角色id进行传入 -->
+          <el-button @click="handleOpenSetRoleDialog(scope.row)" type="success" icon="el-icon-check" plain size="mini"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -77,12 +78,13 @@
         <el-button type="primary" @click="handleAdd">确 定</el-button>
       </div>
     </el-dialog>
+
     <!-- 修改用户的对话框 -->
     <el-dialog title="修改用户" :visible.sync="editUserDialogFormVisible">
       <el-form ref="form" :rules="rules" label-width="80px" :model="formData">
-        <el-form-item prop="username" label="用户名">
+        <el-form-item label="用户名">
           <!-- prop 用来匹配下面数据定义的验证方式 直接传入参数就可以 -->
-          <el-input v-model="formData.username" auto-complete="off"></el-input>
+          <el-input disabled v-model="formData.username" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="formData.email" auto-complete="off"></el-input>
@@ -93,7 +95,33 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addUserDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleAdd">确 定</el-button>
+        <el-button type="primary" @click="handleEdit">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 分配角色对话框 -->
+    <el-dialog title="分配用户" @close="handleClose" :visible.sync="setUserDialogFormVisible">
+      <el-form ref="form" :rules="rules" label-width="100px" :model="formData">
+        <el-form-item label="用户名">
+          {{ formData.username }}
+        </el-form-item>
+        <el-form-item label="请选择角色">
+          <el-select v-model="currentRoleId" placeholder="请选择">
+            <!-- 由于 value绑定的hi字符串数字 所以加 : 改为数字 -->
+            <el-option label="请选择" :value="-1" disabled>
+            </el-option>
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="setUserDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleSetRole">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -130,7 +158,15 @@ export default {
         ]
       },
       // 控制修改用户对话框的显示或隐藏
-      editUserDialogFormVisible: false
+      editUserDialogFormVisible: false,
+      // 控制分配角色的 框显示还是影藏
+      setUserDialogFormVisible: false,
+      // 控制分配角色的对话框显示或者隐藏  下拉框
+      setRoleDialogFormVisible: false,
+      // 绑定下拉框
+      currentRoleId: -1,
+      // 绑定下拉框的数据
+      options: []
     };
   },
   created() {
@@ -204,7 +240,7 @@ export default {
     },
     // 改变用户状态
     async hanleChange(user) {
-      console.log(user);
+      // console.log(user);
       // 发送异步请求
       const response = await this.$Http.put(`users/${user.id}/state/${user.mg_state}`);
       // 将获取的用户信息进行结构
@@ -248,6 +284,8 @@ export default {
       for (let key in this.formData) {
         this.formData[key] = '';
       }
+      // 重置下拉框中转钟的项
+      this.currentRoleId = -1;
     },
     // 点击编辑按钮 将当前用户的对象数据传过来
     handleOpenEditDialog(user) {
@@ -257,6 +295,55 @@ export default {
       this.formData.username = user.username;
       this.formData.email = user.email;
       this.formData.mobile = user.mobile;
+
+      // 记录下当前用户的id
+      this.formData.id = user.id;
+    },
+    // 编辑之后点击确定按钮发送请求
+    async handleEdit() {
+      // 发送请求
+      const response = await this.$Http.put(`/users/${this.formData.id}`, {
+        email: this.formData.email,
+        mobile: this.formData.mobile
+      });
+      // 将获取的数据进行结构
+      const { meta: { msg, status } } = response.data;
+      if (status === 200) {
+        // 当请求发送成功之后 弹框通知,刷新数据 关闭弹窗
+        this.$message.success(msg);
+        this.loadData();
+        this.editUserDialogFormVisible = false;
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    // 角色分配点击
+    async handleOpenSetRoleDialog(user) {
+      this.setUserDialogFormVisible = true;
+      this.formData.username = user.username;
+      // 发送请求获取所有的角色
+      const response = await this.$Http.get('roles');
+      this.options = response.data.data;
+      // 设置当前用户默认角色
+      const res = await this.$Http.get(`users/${user.id}`);
+      this.currentRoleId = res.data.data.rid;
+      // 记录用户id
+      this.formData.id = user.id;
+    },
+    // 点击确定发送数据
+    async handleSetRole() {
+      const response = await this.$Http.put(`users/${this.formData.id}/role`, {
+        rid: this.currentRoleId
+      });
+      const { meta: { msg, status } } = response.data;
+      if (status === 200) {
+        // 成功
+        this.$message.success(msg);
+        this.setUserDialogFormVisible = false;
+      } else {
+        // 失败
+        this.$message.error(msg);
+      }
     }
   }
 };
