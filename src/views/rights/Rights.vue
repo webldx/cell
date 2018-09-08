@@ -52,11 +52,6 @@ export default {
 </script>
 
 <style>
-.card {
-  height: 100%;
-  overflow: auto;
-}
-
 .el-main {
   line-height: 20px;
 }

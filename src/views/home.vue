@@ -15,6 +15,7 @@
         </el-col>
       </el-row>
     </el-header>
+    
     <el-container>
       <el-aside width="200px">
           <!-- 侧边栏  只有一个子菜单打开   将index作为path进行路径跳转      -->
@@ -59,14 +60,14 @@ export default {
   // 因为页面以上来就是显示主页面,所以在一上来的时候就得验证一下是否有token
   beforeCreate() {
     // 获取本地中的token
-    const token = sessionStorage.getItem('token');
-    // 判断token是否存在,如果不存在返回结果就是null
-    if (!token) {
-      // 如果token不存在 进行弹框提示
-      this.$message.warning('请先登录');
-      // 并进行页面跳转
-      this.$router.push('/login');
-    }
+    // const token = sessionStorage.getItem('token');
+    // // 判断token是否存在,如果不存在返回结果就是null
+    // if (!token) {
+    //   // 如果token不存在 进行弹框提示
+    //   this.$message.warning('请先登录');
+    //   // 并进行页面跳转
+    //   this.$router.push('/login');
+    // }
   },
   created() {
     this.loadMenus();

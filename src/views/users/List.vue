@@ -351,10 +351,6 @@ export default {
 </script>
 
 <style>
-.box-card {
-  height: 100%;
-}
-
 .row {
   margin: 15px 0;
 }
