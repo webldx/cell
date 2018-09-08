@@ -3,7 +3,7 @@
     <!-- 面包屑 -->
     <my-breadcrumb level1="商品管理" level2="商品分类"></my-breadcrumb>
     <!-- 添加按钮 -->
-    <el-button @click="addDialogFormVisible = true" style="margin-top: 10px; margin-bottom: 10px" type="success" plain>添加分类</el-button>
+    <el-button @click="handleOpenAddDialog" style="margin-top: 10px; margin-bottom: 10px" type="success" plain>添加分类</el-button>
     <!-- 表格 -->
     <el-table height="530" border stripe :data="tableData" style="width: 100%">
         <template>
@@ -81,8 +81,10 @@
             options 提供展示的数据,是数组
             v-model 数据绑定,默认让谁显示,多级下拉框,绑定的是多个值
             change 选中项改变的时候执行
+            props对象,设置妒忌下拉框显示的属性,value对象的属性,子节点对应的属性
           -->
           <el-cascader
+            :props="{label: 'cat_name', value: 'cat_id', children: 'children'}"
             change-on-select
             :options="options"
             v-model="selectedOptions">
@@ -150,9 +152,14 @@ export default {
       this.pagenum = val;
       this.loadData();
       console.log(`当前页: ${val}`);
-    }
+    },
     // 添加按钮的点击事件
-    // addDialogFormVisible =
+    async handleOpenAddDialog() {
+      // 让对话框显示
+      this.addDialogFormVisible = true;
+      const response = await this.$Http.get('categories?type=2');
+      this.options = response.data.data;
+    }
   }
 };
 </script>
