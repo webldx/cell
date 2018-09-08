@@ -19,53 +19,23 @@
       <el-aside width="200px">
           <!-- 侧边栏  只有一个子菜单打开   将index作为path进行路径跳转      -->
         <el-menu :unique-opened="true" :router="true" style="height: 100%" default-active="0">
-          <el-submenu index="1">
+          <el-submenu
+            v-for="level1 in menus"
+            :key="level1.id"
+            :index="'/' + level1.path">
               <!-- 显示的是父菜单的内容 -->
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>用户管理</span>
+                <span>{{ level1.authName }}</span>
               </template>
               <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="/users"><i class="el-icon-menu"></i>用户列表</el-menu-item>
-          </el-submenu>
-          <el-submenu index="2">
-              <!-- 显示的是父菜单的内容 -->
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>权限管理</span>
-              </template>
-              <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="/roles"><i class="el-icon-menu"></i>角色列表</el-menu-item>
-              <el-menu-item index="/rights"><i class="el-icon-menu"></i>权限列表</el-menu-item>
-          </el-submenu>
-          <el-submenu index="3">
-              <!-- 显示的是父菜单的内容 -->
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>商品管理</span>
-              </template>
-              <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="3-1"><i class="el-icon-menu"></i>商品列表</el-menu-item>
-              <el-menu-item index="3-2"><i class="el-icon-menu"></i>分类参数</el-menu-item>
-              <el-menu-item index="categories"><i class="el-icon-menu"></i>商品分类</el-menu-item>
-          </el-submenu>
-          <el-submenu index="4">
-              <!-- 显示的是父菜单的内容 -->
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>订单管理</span>
-              </template>
-              <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="4-1"><i class="el-icon-menu"></i>订单列表</el-menu-item>
-          </el-submenu>
-          <el-submenu index="5">
-              <!-- 显示的是父菜单的内容 -->
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>数据统计</span>
-              </template>
-              <!-- 菜单项 el-menu-item -->
-              <el-menu-item index="5-1"><i class="el-icon-menu"></i>数据列表</el-menu-item>
+              <el-menu-item
+                v-for="level2 in level1.children"
+                :key="level2.id"
+                :index="'/' + level2.path">
+                <i class="el-icon-menu"></i>
+                {{ level2.authName }}
+              </el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -79,6 +49,12 @@
 
 <script>
 export default {
+  data() {
+    return {
+      // 获取菜单数据
+      menus: []
+    };
+  },
 
   // 因为页面以上来就是显示主页面,所以在一上来的时候就得验证一下是否有token
   beforeCreate() {
@@ -92,6 +68,9 @@ export default {
       this.$router.push('/login');
     }
   },
+  created() {
+    this.loadMenus();
+  },
   // 设置方法
   methods: {
     handleLogout() {
@@ -101,6 +80,14 @@ export default {
       this.$message.success('退出成功');
       // 清除之后进行页面跳转
       this.$router.push('/login');
+    },
+    // 加载菜单数据
+    async loadMenus() {
+      const response = await this.$Http.get('menus');
+      const { meta: { status } } = response.data;
+      if (status === 200) {
+        this.menus = response.data.data;
+      }
     }
   }
 
