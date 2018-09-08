@@ -3,7 +3,7 @@
     <!-- 面包屑 -->
     <my-breadcrumb level1="商品管理" level2="商品分类"></my-breadcrumb>
     <!-- 添加按钮 -->
-    <el-button style="margin-top: 10px; margin-bottom: 10px" type="success" plain>添加分类</el-button>
+    <el-button @click="addDialogFormVisible = true" style="margin-top: 10px; margin-bottom: 10px" type="success" plain>添加分类</el-button>
     <!-- 表格 -->
     <el-table height="530" border stripe :data="tableData" style="width: 100%">
         <template>
@@ -48,7 +48,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页 
+    <!-- 分页
       size-change 每页数量改变
       current-change 当前页改变
       current-page 绑定当前页
@@ -65,6 +65,35 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <!-- 添加分类的对话框 -->
+    <el-dialog
+      title="添加商品分类"
+      :visible.sync="addDialogFormVisible">
+      <el-form
+        label-width="80px"
+        :model="form">
+        <el-form-item label="分类名称">
+          <el-input v-model="form.cat_name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="父级分类">
+          <!-- 多级下拉框 -->
+          <!--
+            options 提供展示的数据,是数组
+            v-model 数据绑定,默认让谁显示,多级下拉框,绑定的是多个值
+            change 选中项改变的时候执行
+          -->
+          <el-cascader
+            change-on-select
+            :options="options"
+            v-model="selectedOptions">
+          </el-cascader>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addDialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -82,7 +111,15 @@ export default {
       tableData: [],
       pagenum: 1,
       pagesize: 9,
-      total: 0
+      total: 0,
+      // 添加分类对话框的显示与隐藏
+      addDialogFormVisible: false,
+      form: {
+        cat_name: ''
+      },
+      // 绑定多级下拉框
+      options: [],
+      selectedOptions: []
     };
   },
   created() {
@@ -110,10 +147,12 @@ export default {
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
-      this.pagenum = val;      
+      this.pagenum = val;
       this.loadData();
       console.log(`当前页: ${val}`);
     }
+    // 添加按钮的点击事件
+    // addDialogFormVisible =
   }
 };
 </script>
