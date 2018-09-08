@@ -5,51 +5,66 @@
     <!-- 添加按钮 -->
     <el-button style="margin-top: 10px; margin-bottom: 10px" type="success" plain>添加分类</el-button>
     <!-- 表格 -->
-      <el-table border stripe :data="tableData" style="width: 100%">
-        <el-table-column prop="cat_namae" label="分类名称" width="180">
-          <template>
-            <!--
-              treeKey 作用是设置每一项的唯一标识3
-              parentKey 绑定父级id的属性
-              levelKey 绑定不同级别的属性
-              indentSize 设置不同级别的缩进
-              childKey 默认值是children,标示子节点的属性
-            -->
-            <el-table-tree-column
-              treeKey="cat_id"
-              parentKey="cat_pid"
-              levelKey="cat_level"
-              :indentSize="20"
-              prop="cat_name"
-              label="分类名称"
-              width="300">
-            </el-table-tree-column>
-          </template>
-        </el-table-column>
-        <!-- 级别 -->
-        <el-table-column prop="cat_level" label="级别" width="180">
-          <template slot-scope="scope">
-            <span v-if="scope.row.cat_level === 0">一级</span>
-            <span v-else-if="scope.row.cat_level === 1">二级</span>
-            <span v-else-if="scope.row.cat_level === 2">三级</span>
-          </template>
-        </el-table-column>
-        <!-- 是否有效 -->
-        <el-table-column width="200" prop="cat_deleted" label="是否有效">
-          <template slot-scope="scope">
-            {{ scope.row.cat_cat_deleted ? '无效' : '有效'}}
-          </template>
-        </el-table-column>
-        <!-- 操作按钮 -->
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <!-- 编辑按钮点击事件 将弹框显示 -->
-            <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
-            <!-- 给删除按钮添加点击事件并且将当前行的id传过去 -->
-            <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+    <el-table height="530" border stripe :data="tableData" style="width: 100%">
+        <template>
+          <!--
+            treeKey 作用是设置每一项的唯一标识3
+            parentKey 绑定父级id的属性
+            levelKey 绑定不同级别的属性
+            indentSize 设置不同级别的缩进
+            childKey 默认值是children,标示子节点的属性
+          -->
+          <el-table-tree-column
+            treeKey="cat_id"
+            parentKey="cat_pid"
+            levelKey="cat_level"
+            :indentSize="20"
+            prop="cat_name"
+            label="分类名称"
+            width="300">
+          </el-table-tree-column>
+        </template>
+      <!-- 级别 -->
+      <el-table-column prop="cat_level" label="级别" width="180">
+        <template slot-scope="scope">
+          <span v-if="scope.row.cat_level === 0">一级</span>
+          <span v-else-if="scope.row.cat_level === 1">二级</span>
+          <span v-else-if="scope.row.cat_level === 2">三级</span>
+        </template>
+      </el-table-column>
+      <!-- 是否有效 -->
+      <el-table-column width="200" prop="cat_deleted" label="是否有效">
+        <template slot-scope="scope">
+          {{ scope.row.cat_cat_deleted ? '无效' : '有效'}}
+        </template>
+      </el-table-column>
+      <!-- 操作按钮 -->
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <!-- 编辑按钮点击事件 将弹框显示 -->
+          <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
+          <!-- 给删除按钮添加点击事件并且将当前行的id传过去 -->
+          <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 分页 
+      size-change 每页数量改变
+      current-change 当前页改变
+      current-page 绑定当前页
+      page-sizes 下拉框显示的条数
+      layout 所以功能
+      total 总条数
+    -->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
   </el-card>
 </template>
 
@@ -64,7 +79,10 @@ export default {
   },
   data() {
     return {
-      tableData: []
+      tableData: [],
+      pagenum: 1,
+      pagesize: 9,
+      total: 0
     };
   },
   created() {
@@ -72,15 +90,29 @@ export default {
   },
   methods: {
     async loadData() {
-      const response = await this.$Http.get('categories?pagenum=1&pagesize=10');
+      const response = await this.$Http.get(`categories?pagenum=${this.pagenum}&pagesize=${this.pagesize}`);
       // console.log(response);
       const { meta: { msg, status } } = response.data;
       if (status === 200) {
         this.tableData = response.data.data.result;
+        // 获取响应之后,设置total的值
+        this.total = response.data.data.total;
         this.$message.success(msg);
       } else {
         this.$message.error(msg);
       }
+    },
+    // 分页的方法
+    handleSizeChange(val) {
+      // 重新记录pagesize
+      this.pagesize = val;
+      this.loadData();
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.pagenum = val;      
+      this.loadData();
+      console.log(`当前页: ${val}`);
     }
   }
 };
