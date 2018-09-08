@@ -11,6 +11,8 @@ import UsersList from '@/views/users/List';
 import Rights from '@/views/rights/Rights';
 // 导入角色列表组件
 import Roles from '@/views/rights/Roles';
+
+import Categories from '@/views/goods/Categories';
 Vue.use(Router);
 
 export default new Router({
@@ -36,6 +38,10 @@ export default new Router({
           name: 'roles',
           path: 'roles',
           component: Roles
+        }, {
+          name: 'categories',
+          path: '/categories',
+          component: Categories
         }
       ]
     }

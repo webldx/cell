@@ -47,7 +47,7 @@
               <!-- 菜单项 el-menu-item -->
               <el-menu-item index="3-1"><i class="el-icon-menu"></i>商品列表</el-menu-item>
               <el-menu-item index="3-2"><i class="el-icon-menu"></i>分类参数</el-menu-item>
-              <el-menu-item index="3-3"><i class="el-icon-menu"></i>商品分类</el-menu-item>
+              <el-menu-item index="categories"><i class="el-icon-menu"></i>商品分类</el-menu-item>
           </el-submenu>
           <el-submenu index="4">
               <!-- 显示的是父菜单的内容 -->

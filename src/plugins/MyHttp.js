@@ -1,6 +1,6 @@
 // 1.引入axios
 import axios from 'axios';
-// 引用组件
+// 引用加载动画组件
 import { Loading } from 'element-ui';
 
 const MyHttp = {};
@@ -8,6 +8,7 @@ const MyHttp = {};
 MyHttp.install = function(Vue) {
   axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/';
 
+  // 由于这个变量在请求拦截中和在响应拦截中都要使用
   let loadingInstance = null;
   // Add a request interceptor
   // 添加请求的拦截器

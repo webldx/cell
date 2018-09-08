@@ -178,9 +178,9 @@ export default {
       // 在一开始请求的时候就得将变量重新赋值
       this.loading = true;
       // 获取token
-      const token = sessionStorage.getItem('token');
+      // const token = sessionStorage.getItem('token');
       // 设置请求头
-      this.$Http.defaults.headers.common['Authorization'] = token;
+      // this.$Http.defaults.headers.common['Authorization'] = token;
       // 发送请求       将后来添加的数据也进行传参进行发送数据
       const response = await this.$Http.get(`users?pagenum=${this.pagenum}&pagesize=${this.pagesize}&query=${this.searchValue}`);
       // console.log(response);
