@@ -15,7 +15,7 @@
         </el-col>
       </el-row>
     </el-header>
-    
+
     <el-container>
       <el-aside width="200px">
           <!-- 侧边栏  只有一个子菜单打开   将index作为path进行路径跳转      -->
