@@ -250,7 +250,7 @@ export default {
     // 编辑页面点击确定按钮时,发送请求
     async handleEdit() {
       // 由于要发送请求,但是数据获取不到,所以只能在上个事件中获取
-      const response = await this.$Http.put(`categories/${this.currentCat.cat_id}`,this.form);
+      const response = await this.$Http.put(`categories/${this.currentCat.cat_id}`, this.form);
       // console.log(this.form);
       const { meta: { msg, status } } = response.data;
       if (status === 200) {
