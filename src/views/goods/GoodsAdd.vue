@@ -55,7 +55,7 @@
             </el-checkbox-group>
           </el-form-item>
         </el-tab-pane>
-        <el-tab-pane label="商品属性">商品属性</el-tab-pane>
+        <el-tab-pane label="商品属性"></el-tab-pane>
         <el-tab-pane label="商品图片">商品图片</el-tab-pane>
         <el-tab-pane label="商品内容">商品内容</el-tab-pane>
       </el-tabs>
@@ -100,7 +100,8 @@ export default {
         if (this.selectedOptions.length < 3) {
           this.$message.warning('请选择商品的三级分类');
         } else {
-          this.loadParams();
+          const sel = tab.index === '1' ? 'many' : 'only';
+          this.loadParams(sel);
         }
       }
     },
@@ -120,18 +121,23 @@ export default {
       }
     },
     // 加载分类参数,(动态参数与静态参数)
-    async loadParams() {
-      const response = await this.$Http.get(`categories/${this.selectedOptions[2]}/attributes?sel=many`);
-      console.log(response);
-      // 将获取的参数进行赋值
-      this.dynamicParams = response.data.data;
-      // console.log(dynamicParams);
-      // // 把动态参数的attr_vals 转换成数组，方便界面上去遍历
-      // // 遍历dynamicParams数组，把attr_vals转换成数组
-      this.dynamicParams.forEach((item) => {
-        // console.log(item);
-        item.attr_vals = item.attr_vals.length === 0 ? [] : item.attr_vals.split(',');
-      });
+    async loadParams(sel) {
+      const response = await this.$Http.get(`categories/${this.selectedOptions[2]}/attributes?sel=${sel}`);
+      if (sel === 'many') {
+        // console.log(response);
+        // 将获取的参数进行赋值
+        this.dynamicParams = response.data.data;
+        // console.log(dynamicParams);
+        // // 把动态参数的attr_vals 转换成数组，方便界面上去遍历
+        // // 遍历dynamicParams数组，把attr_vals转换成数组
+        this.dynamicParams.forEach((item) => {
+          // console.log(item);
+          item.attr_vals = item.attr_vals.length === 0 ? [] : item.attr_vals.split(',');
+        });
+      } else {
+        this.staticParams = response.data.data;
+        console.log(this.staticParams);
+      }
     }
   }
 };
