@@ -42,9 +42,9 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <!-- 编辑按钮点击事件 将弹框显示 -->
-          <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
+          <el-button  @click="handleOpenEditDialog(scope.row)" type="primary" icon="el-icon-edit" plain size="mini"></el-button>
           <!-- 给删除按钮添加点击事件并且将当前行的id传过去 -->
-          <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
+          <el-button @click="handleDelete(scope.row)" type="danger" icon="el-icon-delete" plain size="mini"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -84,16 +84,33 @@
             props对象,设置妒忌下拉框显示的属性,value对象的属性,子节点对应的属性
           -->
           <el-cascader
-            :props="{label: 'cat_name', value: 'cat_id', children: 'children'}"
+            clearable
             change-on-select
             :options="options"
+            :props="{label: 'cat_name', value: 'cat_id', children: 'children'}"
             v-model="selectedOptions">
           </el-cascader>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addDialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="handleAdd">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 编辑的对话框 -->
+    <el-dialog
+      title="修改商品分类"
+      :visible.sync="editDialogFormVisible">
+      <el-form
+        label-width="80px"
+        :model="form">
+        <el-form-item label="分类名称">
+          <el-input v-model="form.cat_name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -116,6 +133,8 @@ export default {
       total: 0,
       // 添加分类对话框的显示与隐藏
       addDialogFormVisible: false,
+      // 控制编辑对话框的显示隐藏
+      editDialogFormVisible: false,
       form: {
         cat_name: ''
       },
@@ -159,6 +178,70 @@ export default {
       this.addDialogFormVisible = true;
       const response = await this.$Http.get('categories?type=2');
       this.options = response.data.data;
+    },
+    // 添加弹框的确定按钮点击事件
+    async handleAdd() {
+      // post categories.
+      // 参数
+      // cat_pid 添加的分类的父id
+      // cat_name 分类的名称  - 绑定的文本框
+      // cat_level 分类的层级0, 1, 2
+      // cat_level  0 1 2
+      // cat_level  this.selectedOptions.length === 0 -- 0  一级
+      // cat_level  this.selectedOptions.length === 1 -- 1  二级
+      // cat_level  this.selectedOptions.length === 2 -- 2  三级
+      this.form.cat_level = this.selectedOptions.length;
+      // cat_pid  一级分类 0
+      // cat_pid  二级分类 this.selectedOptions[0]
+      // cat_pid  三级分类 this.selectedOptions[1]
+      // 分类父级id,添加一级分类
+      if (this.selectedOptions.length === 0) {
+        this.form.cat_pid = 0;
+      } else if (this.selectedOptions.length === 1) {
+        // 添加二级分类
+        this.form.cat_pid = this.selectedOptions[0];
+      } else if (this.selectedOptions.length === 2) {
+        // 添加三级分类
+        this.form.cat_pid = this.selectedOptions[1];
+      }
+      // 发送请求
+      const response = await this.$Http.post('categories', this.form);
+      // console.log(response);
+      const { meta: { msg, status } } = response.data;
+      if (status === 201) {
+        // 关闭对话框
+        this.addDialogFormVisible = false;
+        this.$message.success(msg);
+        this.loadData();
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    // 删除按钮点击的事件
+    async handleDelete(categorie) {
+      try {
+        await this.$confirm('确认要删除当前商品分类?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        });
+        const response = await this.$Http.delete(`categories/${categorie.cat_id}`);
+        const { meta: { msg, status } } = response.data;
+        if (status === 200) {
+          this.$message.success(msg);
+          this.loadData();
+        } else {
+          this.$message.error(msg);
+        }
+      } catch (err) {
+
+      }
+    },
+    // 点击编辑按钮,弹出对话框,给文本框赋值
+    handleOpenEditDialog(cat) {
+      this.editDialogFormVisible = true;
+      this.form.cat_name = cat.cat_name;
+      // console.log(cat)
     }
   }
 };
