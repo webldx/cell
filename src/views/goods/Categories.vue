@@ -110,7 +110,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button @click="handleEdit" type="primary">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -140,7 +140,9 @@ export default {
       },
       // 绑定多级下拉框
       options: [],
-      selectedOptions: []
+      selectedOptions: [],
+      // 当编辑按钮点击的时候,记录当前编辑的对象
+      currentCat: null
     };
   },
   created() {
@@ -242,6 +244,23 @@ export default {
       this.editDialogFormVisible = true;
       this.form.cat_name = cat.cat_name;
       // console.log(cat)
+      // 记录当前的分类对象
+      this.currentCat = cat;
+    },
+    // 编辑页面点击确定按钮时,发送请求
+    async handleEdit() {
+      // 由于要发送请求,但是数据获取不到,所以只能在上个事件中获取
+      const response = await this.$Http.put(`categories/${this.currentCat.cat_id}`,this.form);
+      // console.log(this.form);
+      const { meta: { msg, status } } = response.data;
+      if (status === 200) {
+        // 弹框进行提示,并将当前对话框关闭,并且将返回的数据重新赋值
+        this.$message.success(msg);
+        this.editDialogFormVisible = false;
+        this.currentCat.cat_name = response.data.data.cat_name;
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 };

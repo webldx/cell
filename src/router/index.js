@@ -15,6 +15,8 @@ import Roles from '@/views/rights/Roles';
 import Categories from '@/views/goods/Categories';
 // 将elementUI组件进行引入
 import { Message } from 'element-ui';
+// 将商品列表组件进行引入
+import Goods from '@/views/goods/Goods';
 Vue.use(Router);
 
 const router = new Router({
@@ -44,6 +46,10 @@ const router = new Router({
           name: 'categories',
           path: '/categories',
           component: Categories
+        }, {
+          name: 'goods',
+          path: '/goods',
+          component: Goods
         }
       ]
     }
