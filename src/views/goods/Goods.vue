@@ -25,6 +25,16 @@
         </template>
       </el-table-column>
     </el-table >
+    <!-- 表格分页 -->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
   </el-card>
 </template>
 
@@ -32,7 +42,10 @@
 export default {
   data() {
     return {
-      tableData: []
+      tableData: [],
+      pagenum: 1,
+      pagesize: 10,
+      total: 0
     };
   },
   created() {
@@ -40,17 +53,32 @@ export default {
   },
   methods: {
     async loadData() {
-      const response = await this.$Http.get('/goods?pagenum=1&pagesize=10');
-      // console.log(response);
+      // 后加 在发送请求的时候,,将当前定义的pagenum与pagesize一同发送
+      const response = await this.$Http.get(`/goods?pagenum=${this.pagenum}&pagesize=${this.pagesize}`);
+      console.log(response);
       const { meta: { msg, status } } = response.data;
       if (status === 200) {
         this.tableData = response.data.data.goods;
+        // 后加-->将获取总条数复值给total
+        this.total = response.data.data.total;
       } else {
         this.$message.error(msg);
       }
+    },
+    // 分页事件 每页条数发生变化的时候
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.loadData();
+      console.log(`每页 ${val} 条`);
+    },
+    // 当前页发生变化的时候
+    handleCurrentChange(val) {
+      this.pagenum = val;
+      this.loadData();
+      console.log(`当前页: ${val}`);
     }
   }
-};
+}
 </script>
 
 <style>
