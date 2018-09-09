@@ -78,6 +78,12 @@ export default {
     handleTabClick(tab) {
       // console.log(tab);
       this.active = tab.index - 0;
+      // 进行判断,下面的选项是否显示
+      if (tab.index === '1' || tab.index === '2') {
+        if (this.selectedOptions.length < 3) {
+          this.$message.warning('请选择商品的三级分类');
+        }
+      }
     },
     // 加载多级下拉框中的数据
     async loadOptions() {
@@ -102,8 +108,7 @@ export default {
 .alert {
   margin: 10px 0 10px 0;
 }
-
 .el-main {
-  line-height: 20px;
+  line-height : 20px;
 }
 </style>
