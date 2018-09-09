@@ -32,6 +32,7 @@
           <el-form-item label="商品分类">
             <!-- 多级下拉框 -->
             <el-cascader
+              @change="handleChange"
               clearable
               expand-trigger="hover"
               :options="options"
@@ -75,7 +76,7 @@ export default {
   methods: {
     //  点击tab栏时候执行的方法 默认会有一个参数
     handleTabClick(tab) {
-      console.log(tab);
+      // console.log(tab);
       this.active = tab.index - 0;
     },
     // 加载多级下拉框中的数据
@@ -83,6 +84,15 @@ export default {
       const response = await this.$Http.get(`categories?type=3`);
       // console.log(response);
       this.options = response.data.data;
+    },
+    // 多级下拉框发生改变的时候
+    handleChange() {
+      console.log(this.selectedOptions);
+      if (this.selectedOptions.length !== 3) {
+        // 提示 并且将数组清空
+        this.$message.warning('请选择商品的三级分类');
+        this.selectedOptions.length = 0;
+      }
     }
   }
 };
