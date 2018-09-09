@@ -41,7 +41,20 @@
             </el-cascader>
           </el-form-item>
         </el-tab-pane>
-        <el-tab-pane label="商品参数">商品参数</el-tab-pane>
+        <el-tab-pane label="商品参数">
+          <el-form-item
+            v-for="item in dynamicParams"
+            :key="item.attr_id"
+            :label="item.attr_name">
+            <el-checkbox-group v-model="item.attr_vals">
+              <el-checkbox
+                v-for="val in item.attr_vals"
+                :key="val" border
+                :label="val">
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-tab-pane>
         <el-tab-pane label="商品属性">商品属性</el-tab-pane>
         <el-tab-pane label="商品图片">商品图片</el-tab-pane>
         <el-tab-pane label="商品内容">商品内容</el-tab-pane>
@@ -67,7 +80,11 @@ export default {
       // 绑定多级下拉框的数据
       options: [],
       // 绑定下拉框中的options
-      selectedOptions: []
+      selectedOptions: [],
+      // 存储动态参数
+      dynamicParams: [],
+      // 存储静态参数
+      staticParams: []
     };
   },
   created() {
@@ -82,6 +99,8 @@ export default {
       if (tab.index === '1' || tab.index === '2') {
         if (this.selectedOptions.length < 3) {
           this.$message.warning('请选择商品的三级分类');
+        } else {
+          this.loadParams();
         }
       }
     },
@@ -93,12 +112,26 @@ export default {
     },
     // 多级下拉框发生改变的时候
     handleChange() {
-      console.log(this.selectedOptions);
+      // console.log(this.selectedOptions);
       if (this.selectedOptions.length !== 3) {
         // 提示 并且将数组清空
         this.$message.warning('请选择商品的三级分类');
         this.selectedOptions.length = 0;
       }
+    },
+    // 加载分类参数,(动态参数与静态参数)
+    async loadParams() {
+      const response = await this.$Http.get(`categories/${this.selectedOptions[2]}/attributes?sel=many`);
+      console.log(response);
+      // 将获取的参数进行赋值
+      this.dynamicParams = response.data.data;
+      // console.log(dynamicParams);
+      // // 把动态参数的attr_vals 转换成数组，方便界面上去遍历
+      // // 遍历dynamicParams数组，把attr_vals转换成数组
+      this.dynamicParams.forEach((item) => {
+        // console.log(item);
+        item.attr_vals = item.attr_vals.length === 0 ? [] : item.attr_vals.split(',');
+      });
     }
   }
 };
